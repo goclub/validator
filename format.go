@@ -24,6 +24,7 @@ type Formatter interface {
 	ArrayMinLen(name string, len int, minLen int) string
 	ArrayMaxLen(name string, len int, maxLen int) string
 	ArrayNotAllowEmpty(name string) string
+	ArrayUniqueStrings(name string, repeatElement string) string
 }
 type CNFormat struct {}
 func (CNFormat) StringNotAllowEmpty(name string) string {
@@ -70,4 +71,8 @@ func (CNFormat) ArrayMaxLen(name string, len int, maxLen int) string {
 }
 func (CNFormat) ArrayNotAllowEmpty(name string) string {
 	return name + "不能为空"
+}
+
+func (CNFormat) ArrayUniqueStrings(name string, repeatElement string) string {
+	return name + "中(" + repeatElement + ")重复"
 }

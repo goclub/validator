@@ -157,3 +157,15 @@ func (spec StringSpec) CheckEnum(v string, r *Rule) (fail bool) {
 	}
 	return r.Fail
 }
+
+func uniqueStrings(strings []string) (isRepeat bool, repeatElement string) {
+	hash := map[string]bool{}
+	for _, s := range strings {
+		_,ok := hash[s]; if ok {
+			return true, s
+		} else {
+			hash[s] = true
+		}
+	}
+	return
+}

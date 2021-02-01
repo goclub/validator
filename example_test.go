@@ -64,6 +64,7 @@ func (v RequestCreateUser) VD(r *vd.Rule) {
 		Name:          "技能",
 		MaxLen:        vd.Int(10),
 		MaxLenMessage: "最多填写{{MaxLen}}项",
+		UniqueStrings: v.Skills,
 	})
 	for _, skill := range v.Skills {
 		r.String(skill, vd.StringSpec{

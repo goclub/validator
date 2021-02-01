@@ -12,11 +12,13 @@ type ArraySpec struct {
 	MinLenMessage string
 	MaxLen OptionInt
 	MaxLenMessage string
+	UniqueStrings []string
 }
 func (r *Rule) Array(length int, spec ArraySpec){
 	if r.Fail { return }
 	if spec.CheckMinLen(length, r) {return}
 	if spec.CheckMaxLen(length, r) {return}
+	if spec.CheckUniqueStrings(spec.UniqueStrings, r) {return}
 }
 type arraySpecRender struct {
 	Value interface{}
@@ -41,7 +43,7 @@ func (spec ArraySpec) CheckMinLen(v int, r *Rule) (fail bool) {
 		})
 		r.Break(spec.render(message, v))
 	}
-	return
+	return r.Fail
 }
 func (spec ArraySpec) CheckMaxLen(v int, r *Rule) (fail bool) {
 	if !spec.MaxLen.Valid() {
@@ -55,5 +57,16 @@ func (spec ArraySpec) CheckMaxLen(v int, r *Rule) (fail bool) {
 		})
 		r.Break(spec.render(message, v))
 	}
-	return
+	return r.Fail
+}
+func (spec ArraySpec) CheckUniqueStrings(v []string, r *Rule) (fail bool) {
+	isRepeat, repeatElement := uniqueStrings(v)
+	pass := !isRepeat
+	if !pass {
+		if !pass {
+			message := r.Format.ArrayUniqueStrings(spec.Name, repeatElement)
+			r.Break(spec.render(message, v))
+		}
+	}
+	return r.Fail
 }
