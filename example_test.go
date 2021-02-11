@@ -60,7 +60,7 @@ func (v RequestCreateUser) VD(r *vd.Rule) {
 		Min:            vd.Int(18),
 		MinMessage:     "只允许成年人注册",
 	})
-	r.Array(len(v.Skills), vd.ArraySpec{
+	r.Slice(len(v.Skills), vd.SliceSpec{
 		Name:          "技能",
 		MaxLen:        vd.Int(10),
 		MaxLenMessage: "最多填写{{MaxLen}}项",

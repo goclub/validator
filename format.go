@@ -21,10 +21,10 @@ type Formatter interface {
 	FloatMin(name string, value float64, min float64) string
 	FloatMax(name string, value float64, max float64) string
 
-	ArrayMinLen(name string, len int, minLen int) string
-	ArrayMaxLen(name string, len int, maxLen int) string
-	ArrayNotAllowEmpty(name string) string
-	ArrayUniqueStrings(name string, repeatElement string) string
+	SliceMinLen(name string, len int, minLen int) string
+	SliceMaxLen(name string, len int, maxLen int) string
+	SliceNotAllowEmpty(name string) string
+	SliceUniqueStrings(name string, repeatElement string) string
 }
 type CNFormat struct {}
 func (CNFormat) StringNotAllowEmpty(name string) string {
@@ -63,16 +63,16 @@ func (CNFormat) FloatMax(name string, value float64, max float64) string {
 
 
 
-func (CNFormat) ArrayMinLen(name string, len int, minLen int) string {
+func (CNFormat) SliceMinLen(name string, len int, minLen int) string {
 	return name + "长度不能小于" + xconv.IntString(minLen)
 }
-func (CNFormat) ArrayMaxLen(name string, len int, maxLen int) string {
+func (CNFormat) SliceMaxLen(name string, len int, maxLen int) string {
 	return name + "长度不能大于" + xconv.IntString(maxLen)
 }
-func (CNFormat) ArrayNotAllowEmpty(name string) string {
+func (CNFormat) SliceNotAllowEmpty(name string) string {
 	return name + "不能为空"
 }
 
-func (CNFormat) ArrayUniqueStrings(name string, repeatElement string) string {
+func (CNFormat) SliceUniqueStrings(name string, repeatElement string) string {
 	return name + "中(" + repeatElement + ")重复"
 }
