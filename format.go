@@ -2,7 +2,9 @@ package vd
 
 import (
 	"github.com/goclub/conv"
+	xtime "github.com/goclub/time"
 	"strings"
+	"time"
 )
 
 type Formatter interface {
@@ -25,6 +27,15 @@ type Formatter interface {
 	SliceMaxLen(name string, len int, maxLen int) string
 	SliceNotAllowEmpty(name string) string
 	SliceUniqueStrings(name string, repeatElement string) string
+
+	TimeRangeDefaultName() (startName string, endTime string)
+
+	TimeNotAllowZero(name string) string
+	TimeBeforeIt(name string, value time.Time, beforeIt time.Time) string
+	TimeAfterIt(name string, value time.Time, afterIt time.Time) string
+	TimeBeforeOrEqualIt(name string, value time.Time, beforeOrEqualIt time.Time) string
+	TimeAfterOrEqualIt(name string, value time.Time, afterOrEqualIt time.Time) string
+
 }
 type CNFormat struct {}
 func (CNFormat) StringNotAllowEmpty(name string) string {
@@ -72,7 +83,27 @@ func (CNFormat) SliceMaxLen(name string, len int, maxLen int) string {
 func (CNFormat) SliceNotAllowEmpty(name string) string {
 	return name + "不能为空"
 }
-
 func (CNFormat) SliceUniqueStrings(name string, repeatElement string) string {
 	return name + "中(" + repeatElement + ")重复"
+}
+
+func (CNFormat) TimeNotAllowZero(name string) string {
+	return name + "不能为空"
+}
+
+func (CNFormat) TimeBeforeIt(name string, value time.Time, beforeIt time.Time) string {
+	return name + xtime.FormatChinaTime(value) + "必须在" + xtime.FormatChinaTime(beforeIt) + "之前"
+}
+func (CNFormat) TimeAfterIt(name string, value time.Time, afterIt time.Time) string {
+	return name + xtime.FormatChinaTime(value) + "必须在" + xtime.FormatChinaTime(afterIt) + "之后"
+}
+func (CNFormat) TimeBeforeOrEqualIt(name string, value time.Time, beforeOrEqualIt time.Time) string {
+	return name + xtime.FormatChinaTime(value) + "必须等于" + xtime.FormatChinaTime(beforeOrEqualIt) + "或之前"
+}
+func (CNFormat) TimeAfterOrEqualIt(name string, value time.Time, afterOrEqualIt time.Time) string {
+	return name + xtime.FormatChinaTime(value) + "必须等于" + xtime.FormatChinaTime(afterOrEqualIt) + "或之后"
+}
+
+func (CNFormat) TimeRangeDefaultName() (startName string, endTime string){
+	return "开始时间", "结束时间"
 }

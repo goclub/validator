@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"reflect"
+	"runtime/debug"
 )
 type Checker struct {
 	Format Formatter
@@ -20,7 +21,14 @@ func (checker Checker) Check(data Data) (report Report) {
 	rValue := reflect.ValueOf(data)
 	rType := rValue.Type()
 	if rType.Kind() == reflect.Ptr {
-		panic(errors.New("typejson/go: Check(data) can not be pointer"))
+		// 为了避免服务中断，采用返回验证失败的锤了
+		debug.PrintStack()
+		errorMessage := "goclub/validator: Check(data) data ("+ rType.Name() + ") must be pointer"
+		log.Print(errors.New(errorMessage))
+		return Report{
+			Fail: true,
+			Message: errorMessage,
+		}
 	}
 	return checker.reflectCheck(rValue, rType)
 }
