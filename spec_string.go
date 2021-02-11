@@ -1,7 +1,7 @@
 package vd
 
 import (
-	ge "github.com/og/x/error"
+	"github.com/hoisie/mustache"
 	"log"
 	"regexp"
 	"runtime/debug"
@@ -131,7 +131,14 @@ func checkBanPattern(data banPatternData, render func(string, interface{}) strin
 		return false
 	}
 	for _, pattern := range data.BanPattern {
-		matched, err := regexp.MatchString(pattern, v) ; ge.Check(err)
+		matched, err := regexp.MatchString(pattern, v) ; if err != nil {
+			// 此处如果将错误向上传递则会导致接口易用性下降
+			// panic 会导致不必要的中断服务
+			// 所以这里采取打印错误并验证错误的处理 @nimoc 2021年02月12日01:20:45 (新年快乐)
+			log.Print(err)
+			debug.PrintStack()
+			r.Break("goclub/validator: regexp ban pattern error(" + pattern + ")")
+		}
 		pass := !matched
 		if !pass {
 			message := r.CreateMessage(data.PatternMessage, func() string {
