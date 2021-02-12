@@ -20,7 +20,7 @@ func (o OptionInt) String() string {
 }
 func (o OptionInt) Unwrap() int {
 	if o.valid {return o.int}
-	panic("OptionInt: valid is false, can not unwrap")
+	return 0
 }
 func Int(i int) OptionInt {
 	return OptionInt{true, i}
@@ -41,7 +41,7 @@ func (o OptionFloat) String() string {
 }
 func (o OptionFloat) Unwrap() float64 {
 	if o.valid {return o.float}
-	panic("OptionFloat: valid is false, can not unwrap")
+	return 0
 }
 func Float(f float64) OptionFloat {
 	return OptionFloat{true, f}
