@@ -9,12 +9,14 @@ import (
 type FloatMin struct {
 	Age float64
 }
-func (v FloatMin) VD(r *Rule) {
+func (v FloatMin) VD(r *Rule) (err error) {
 	r.Float(v.Age, FloatSpec{
 		Name: "年龄",
 		Min: Float(18.2),
 	})
+	return nil
 }
+
 func TestFloatMin(t *testing.T) {
 	
 	checker := NewCN()
@@ -44,12 +46,13 @@ type FloatMinMessage struct {
 	Age float64
 }
 
-func (v FloatMinMessage) VD(r *Rule) {
+func (v FloatMinMessage) VD(r *Rule) (err error) {
 	r.Float(v.Age, FloatSpec{
 		Name: "年龄",
 		Min: Float(18.2),
 		MinMessage:"年龄不可以小于{{Min}}",
 	})
+	return nil
 }
 func TestFloatMinMessage(t *testing.T) {
 	
@@ -72,11 +75,12 @@ func TestFloatMinMessage(t *testing.T) {
 type FloatMax struct {
 	Age float64
 }
-func (v FloatMax) VD(r *Rule) {
+func (v FloatMax) VD(r *Rule) (err error) {
 	r.Float(v.Age, FloatSpec{
 		Name: "年龄",
 		Max: Float(18.2),
 	})
+	return nil
 }
 func TestFloatMax(t *testing.T) {
 	
@@ -106,12 +110,13 @@ func TestFloatMax(t *testing.T) {
 type FloatMaxMessage struct {
 	Age float64
 }
-func (v FloatMaxMessage) VD(r *Rule) {
+func (v FloatMaxMessage) VD(r *Rule) (err error) {
 	r.Float(v.Age, FloatSpec{
 		Name: "年龄",
 		Max: Float(18),
 		MaxMessage:"年龄不可以大于{{Max}}",
 	})
+	return nil
 }
 func TestFloatMaxMessage(t *testing.T) {
 	
@@ -132,12 +137,13 @@ func TestFloatMaxMessage(t *testing.T) {
 type FloatMinMax struct {
 	Age float64
 }
-func (v FloatMinMax) VD (r *Rule) {
+func (v FloatMinMax) VD (r *Rule) (err error) {
 	r.Float(v.Age, FloatSpec{
 		Name: "年龄",
 		Min: Float(2),
 		Max: Float(4),
 	})
+	return nil
 }
 func TestFloatMinMax(t *testing.T) {
 	
