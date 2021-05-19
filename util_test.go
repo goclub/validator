@@ -18,11 +18,12 @@ func (TestUtilEnumValues) Dict() (dict struct{
 	dict.Type.Danger = "danger"
 	return
 }
-func (v TestUtilEnumValues) VD(r *Rule) {
+func (v TestUtilEnumValues) VD(r *Rule) (err error) {
 	r.String(v.Type, StringSpec{
 		Name:              "类型",
 		Enum:              EnumValues(v.Dict().Type),
 	})
+	return nil
 }
 func Test_UtilEnumValues(t *testing.T) {
 	data := TestUtilEnumValues{}

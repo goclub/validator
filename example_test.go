@@ -21,7 +21,9 @@ func ExampleQuickStart() {
 			Detail:   "人民广场一号",
 		},
 	}
-	report := checker.Check(createUser)
+	report, err := checker.Check(createUser) ; if err != nil {
+	    log.Print(err);return
+	}
 	if report.Fail {
 		log.Print(report.Message)
 	} else {
@@ -37,7 +39,7 @@ type RequestCreateUser struct {
 	Skills []string
 	Address RequestCreateUserAddress
 }
-func (v RequestCreateUser) VD(r *vd.Rule) {
+func (v RequestCreateUser) VD(r *vd.Rule) (err error) {
 	r.String(v.Email, vd.StringSpec{
 		Name:"邮箱地址",
 		Ext: []vd.StringSpec{vd.Email()},
@@ -72,6 +74,7 @@ func (v RequestCreateUser) VD(r *vd.Rule) {
 		})
 	}
 	// Address由 RequestCreateUserAddress{}.VD() 实现
+	return nil
 }
 type RequestCreateUserAddress struct {
 	Province string
