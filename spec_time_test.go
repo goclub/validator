@@ -1,9 +1,7 @@
-package vd_test
+package vd
 
 import (
 	xtime "github.com/goclub/time"
-	vd "github.com/goclub/validator"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
 )
@@ -12,44 +10,45 @@ type TimeNotAllowZero struct {
 	A time.Time
 	B time.Time
 }
-func (v TimeNotAllowZero) VD(r *vd.Rule) {
-	r.Time(v.A, vd.TimeSpec{
+func (v TimeNotAllowZero) VD(r *Rule) (err error) {
+	r.Time(v.A, TimeSpec{
 		Name:"时间1",
 		AllowZero: true,
 	})
-	r.Time(v.B, vd.TimeSpec{
+	r.Time(v.B, TimeSpec{
 		Name:"时间2",
 		AllowZero: false,
 	})
+	return nil
 }
 func TestRule_TimeAlowZero(t *testing.T) {
-	c := vd.NewCN()
+	c := NewCN()
 
-	assert.Equal(t, c.Check(TimeNotAllowZero{
+	CheckEqualAndNoError(t, c, TimeNotAllowZero{
 		A: time.Time{},
 		B: time.Time{},
-	}), vd.Report{
+	}, Report{
 		Fail:    true,
 		Message: "时间2不能为空",
 	})
-	assert.Equal(t, c.Check(TimeNotAllowZero{
+	CheckEqualAndNoError(t, c, TimeNotAllowZero{
 		A: time.Now(),
 		B: time.Time{},
-	}), vd.Report{
+	}, Report{
 		Fail:    true,
 		Message: "时间2不能为空",
 	})
-	assert.Equal(t, c.Check(TimeNotAllowZero{
+	CheckEqualAndNoError(t, c, TimeNotAllowZero{
 		A: time.Now(),
 		B: time.Now(),
-	}), vd.Report{
+	}, Report{
 		Fail:    false,
 		Message: "",
 	})
-	assert.Equal(t, c.Check(TimeNotAllowZero{
+	CheckEqualAndNoError(t, c, TimeNotAllowZero{
 		A: time.Time{},
 		B: time.Now(),
-	}), vd.Report{
+	}, Report{
 		Fail:    false,
 		Message: "",
 	})
@@ -59,12 +58,12 @@ type TimeRange1 struct {
 	StartTime time.Time
 	EndTime time.Time
 }
-func (v TimeRange1) VD(r *vd.Rule) {
-	r.Time(v.StartTime, vd.TimeSpec{
+func (v TimeRange1) VD(r *Rule) {
+	r.Time(v.StartTime, TimeSpec{
 		Name:"开始时间",
 		BeforeIt: v.EndTime,
 	})
-	r.Time(v.EndTime, vd.TimeSpec{
+	r.Time(v.EndTime, TimeSpec{
 		Name:"结束时间",
 		AfterIt: v.StartTime,
 	})
@@ -74,38 +73,39 @@ type TimeRange2 struct {
 	StartTime time.Time
 	EndTime time.Time
 }
-func (v TimeRange2) VD(r *vd.Rule) {
-	r.TimeRange(vd.TimeRange{"开始时间", v.StartTime,"结束时间", v.EndTime,})
+func (v TimeRange2) VD(r *Rule) error {
+	r.TimeRange(TimeRange{"开始时间", v.StartTime,"结束时间", v.EndTime,})
+	return nil
 }
 
 func TestRule_TimeRange2(t *testing.T) {
-	c := vd.NewCN()
+	c := NewCN()
 	// start end 互相约束
-	assert.Equal(t, c.Check(TimeRange2{
+	CheckEqualAndNoError(t, c, TimeRange2{
 		StartTime: now,
 		EndTime: now.Add(time.Second*2),
-	}), vd.Report{
+	}, Report{
 		Fail:    false,
 		Message: "",
 	})
-	assert.Equal(t, c.Check(TimeRange2{
+	CheckEqualAndNoError(t, c, TimeRange2{
 		StartTime: now,
 		EndTime: now,
-	}), vd.Report{
+	}, Report{
 		Fail:    false,
 		Message: "",
 	})
-	assert.Equal(t, c.Check(TimeRange2{
+	CheckEqualAndNoError(t, c, TimeRange2{
 		StartTime: now.Add(time.Second),
 		EndTime: now,
-	}), vd.Report{
+	}, Report{
 		Fail:    true,
 		Message: "开始时间" + xtime.FormatChinaTime(now.Add(time.Second)) + "必须等于" + xtime.FormatChinaTime(now) + "或之前",
 	})
-	assert.Equal(t, c.Check(TimeRange2{
+	CheckEqualAndNoError(t, c, TimeRange2{
 		StartTime: now,
 		EndTime: now.Add(-time.Second),
-	}), vd.Report{
+	}, Report{
 		Fail:    true,
 		Message: "开始时间" + xtime.FormatChinaTime(now) + "必须等于" + xtime.FormatChinaTime(now.Add(-time.Second)) + "或之前",
 	})
@@ -115,30 +115,31 @@ type TestAfterIt struct {
 	V time.Time
 }
 
-func (v TestAfterIt) VD(r *vd.Rule) {
-	r.Time(v.V, vd.TimeSpec{
+func (v TestAfterIt) VD(r *Rule) error {
+	r.Time(v.V, TimeSpec{
 		Name:"v",
 		AfterIt: now,
 	})
+	return nil
 }
 
 func TestRule_TimeAfterIt(t *testing.T) {
-	c := vd.NewCN()
-	assert.Equal(t, c.Check(TestAfterIt{
+	c := NewCN()
+	CheckEqualAndNoError(t, c, TestAfterIt{
 		now,
-	}), vd.Report{
+	}, Report{
 		Fail:    true,
 		Message: "v" + xtime.FormatChinaTime(now) + "必须在" + xtime.FormatChinaTime(now) + "之后",
 	})
-	assert.Equal(t, c.Check(TestAfterIt{
+	CheckEqualAndNoError(t, c, TestAfterIt{
 		now.Add(-time.Second),
-	}), vd.Report{
+	}, Report{
 		Fail:    true,
 		Message: "v" + xtime.FormatChinaTime(now.Add(-time.Second)) + "必须在" + xtime.FormatChinaTime(now) + "之后",
 	})
-	assert.Equal(t, c.Check(TestAfterIt{
+	CheckEqualAndNoError(t, c, TestAfterIt{
 		now.Add(time.Second*1),
-	}), vd.Report{
+	}, Report{
 		Fail:    false,
 		Message: "",
 	})
@@ -148,31 +149,32 @@ type TestAfterOrEqualIt struct {
 	V time.Time
 }
 
-func (v TestAfterOrEqualIt) VD(r *vd.Rule) {
-	r.Time(v.V, vd.TimeSpec{
+func (v TestAfterOrEqualIt) VD(r *Rule) error {
+	r.Time(v.V, TimeSpec{
 		Name:"v",
 		AfterOrEqualIt: now,
 	})
+	return nil
 }
 
 
 func TestRule_TimeAfterOrEqualIt(t *testing.T) {
-	c := vd.NewCN()
-	assert.Equal(t, c.Check(TestAfterOrEqualIt{
+	c := NewCN()
+	CheckEqualAndNoError(t, c, TestAfterOrEqualIt{
 		now,
-	}), vd.Report{
+	}, Report{
 		Fail:    false,
 		Message: "",
 	})
-	assert.Equal(t, c.Check(TestAfterOrEqualIt{
+	CheckEqualAndNoError(t, c, TestAfterOrEqualIt{
 		now.Add(-time.Second),
-	}), vd.Report{
+	}, Report{
 		Fail:    true,
 		Message: "v" + xtime.FormatChinaTime(now.Add(-time.Second)) + "必须等于" + xtime.FormatChinaTime(now) + "或之后",
 	})
-	assert.Equal(t, c.Check(TestAfterOrEqualIt{
+	CheckEqualAndNoError(t, c, TestAfterOrEqualIt{
 		now.Add(time.Second*1),
-	}), vd.Report{
+	}, Report{
 		Fail:    false,
 		Message: "",
 	})
@@ -183,30 +185,31 @@ type TestBeforeIt struct {
 	V time.Time
 }
 
-func (v TestBeforeIt) VD(r *vd.Rule) {
-	r.Time(v.V, vd.TimeSpec{
+func (v TestBeforeIt) VD(r *Rule) error {
+	r.Time(v.V, TimeSpec{
 		Name:"v",
 		BeforeIt: now,
 	})
+	return nil
 }
 
 func TestRule_TimeBeforeIt(t *testing.T) {
-	c := vd.NewCN()
-	assert.Equal(t, c.Check(TestBeforeIt{
+	c := NewCN()
+	CheckEqualAndNoError(t, c, TestBeforeIt{
 		now,
-	}), vd.Report{
+	}, Report{
 		Fail:    true,
 		Message: "v" + xtime.FormatChinaTime(now) + "必须在" + xtime.FormatChinaTime(now) + "之前",
 	})
-	assert.Equal(t, c.Check(TestBeforeIt{
+	CheckEqualAndNoError(t, c, TestBeforeIt{
 		now.Add(time.Second),
-	}), vd.Report{
+	}, Report{
 		Fail:    true,
 		Message: "v" + xtime.FormatChinaTime(now.Add(time.Second)) + "必须在" + xtime.FormatChinaTime(now) + "之前",
 	})
-	assert.Equal(t, c.Check(TestBeforeIt{
+	CheckEqualAndNoError(t, c, TestBeforeIt{
 		now.Add(-time.Second*1),
-	}), vd.Report{
+	}, Report{
 		Fail:    false,
 		Message: "",
 	})
@@ -216,31 +219,32 @@ type TestBeforeOrEqualIt struct {
 	V time.Time
 }
 
-func (v TestBeforeOrEqualIt) VD(r *vd.Rule) {
-	r.Time(v.V, vd.TimeSpec{
+func (v TestBeforeOrEqualIt) VD(r *Rule) (err error) {
+	r.Time(v.V, TimeSpec{
 		Name:"v",
 		BeforeOrEqualIt: now,
 	})
+	return nil
 }
 
 
 func TestRule_TimeBeforeOrEqualIt(t *testing.T) {
-	c := vd.NewCN()
-	assert.Equal(t, c.Check(TestBeforeOrEqualIt{
+	c := NewCN()
+	CheckEqualAndNoError(t, c, TestBeforeOrEqualIt{
 		now,
-	}), vd.Report{
+	}, Report{
 		Fail:    false,
 		Message: "",
 	})
-	assert.Equal(t, c.Check(TestBeforeOrEqualIt{
+	CheckEqualAndNoError(t, c, TestBeforeOrEqualIt{
 		now.Add(time.Second),
-	}), vd.Report{
+	}, Report{
 		Fail:    true,
 		Message: "v" + xtime.FormatChinaTime(now.Add(time.Second)) + "必须等于" + xtime.FormatChinaTime(now) + "或之前",
 	})
-	assert.Equal(t, c.Check(TestBeforeOrEqualIt{
+	CheckEqualAndNoError(t, c, TestBeforeOrEqualIt{
 		now.Add(-time.Second*1),
-	}), vd.Report{
+	}, Report{
 		Fail:    false,
 		Message: "",
 	})

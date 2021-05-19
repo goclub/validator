@@ -1,6 +1,7 @@
 package vd_test
 
 import (
+	"fmt"
 	vd "github.com/goclub/validator"
 	"log"
 	"testing"
@@ -90,3 +91,57 @@ func (v RequestCreateUserAddress) VD(r *vd.Rule) {
 		PatternMessage: "地址必须包含门牌号",
 	})
 }
+
+
+// Generate by https://tools.goclub.vip
+// ---------------------- DO NOT EDIT (Begin) ----------------------
+// Source enums:
+// {"name":"LogKind","type":"uint8","items":[{"field":"Info","value":"1"},{"field":"Danger","value":"2"}]}
+type LogKind uint8
+// Create LogKind by uint8
+func NewLogKind(v uint8)(logKind LogKind, err error) {
+	logKind = LogKind(v)
+	err = logKind.Validator()
+	return
+}
+// return LogKind basic types
+func (v LogKind) Uint8 () uint8 { return uint8(v)}
+// Example: if logKind == logKind.Enum().xxx {...}
+func (LogKind) Enum() (e struct {
+	Info   LogKind
+	Danger LogKind
+}){
+	return EnumLogKind()
+}
+// Example: if logKind == EnumLogKind().xxx {...}
+func EnumLogKind() (e struct {
+	Info   LogKind
+	Danger LogKind
+}) {
+	e.Info   = 1
+	e.Danger = 2
+	return
+}
+// Type safe match of all values, likeness switch
+func (v LogKind) Match(
+	Info func(_ struct{Info bool}) error,
+	Danger func(_ struct{Danger bool}) error,
+) error {
+	e := v.Enum()
+	switch v {
+	default:
+		return fmt.Errorf("LogKind can not be %s", v)
+	case e.Info:
+		return Info(struct{ Info bool } {})
+	case e.Danger:
+		return Danger(struct{ Danger bool } {})
+	}
+}
+// Verify data
+func (v LogKind) Validator() error {
+	return v.Match(
+		func(_ struct{Info bool}) error {return nil} ,
+		func(_ struct{Danger bool}) error {return nil} ,
+	)
+}
+// ---------------------- DO NOT EDIT (End) ----------------------

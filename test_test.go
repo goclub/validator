@@ -7,8 +7,5 @@ import (
 
 func CheckEqualAndNoError(t *testing.T, checker Checker, data Data, report Report) {
 	r, err := checker.Check(data) ; assert.NoError(t, err)
-	assert.Equal(t, r, Report{
-		Fail:    true,
-		Message: "年龄不能小于18.2",
-	})
+	assert.Equal(t, r, report)
 }
