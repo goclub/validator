@@ -328,10 +328,10 @@ func (v SpecStringEmail) VD(r *Rule) (err error){
 	r.String(v.Email, StringSpec{
 		Name: "邮箱",
 		Ext:  []StringSpec{
-			Email(),
+			ExtString{}.Email(),
 		},
 	})
-	r.String(v.OtherEmail, Email().NameIs("附属邮箱"))
+	r.String(v.OtherEmail, ExtString{}.Email().NameIs("附属邮箱"))
 	return nil
 }
 func TestStringEmail(t *testing.T) {

@@ -42,7 +42,7 @@ type RequestCreateUser struct {
 func (v RequestCreateUser) VD(r *vd.Rule) (err error) {
 	r.String(v.Email, vd.StringSpec{
 		Name:"邮箱地址",
-		Ext: []vd.StringSpec{vd.Email()},
+		Ext: []vd.StringSpec{vd.ExtString{}.Email()},
 	})
 	r.String(v.Name, vd.StringSpec{
 		Name:              "姓名",

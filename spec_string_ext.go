@@ -50,85 +50,92 @@ const (
 	// splitParamsRegex          = `'[^']*'|\S+`
 )
 
+type ExtString struct {
 
+}
+
+// 向前兼容
 func Email() StringSpec {
+	return ExtString{}.Email()
+}
+func (ExtString) Email() StringSpec {
 	return StringSpec{
 		Pattern: []string{emailRegex},
 	}
 }
-func ChinaMobile() StringSpec {
+func (ExtString) ChinaMobile() StringSpec {
 	return StringSpec{
 		MinRuneLen: 11,
 		MaxRuneLen: 11,
 	}
 }
-func UUID() StringSpec {
+func (ExtString) UUID() StringSpec {
 	return StringSpec{
 		Pattern: []string{uUIDRegex},
 	}
 }
-func Base64() StringSpec {
+func (ExtString) Base64() StringSpec {
 	return StringSpec{
 		Pattern: []string{base64Regex},
 	}
 }
-func Base64URL() StringSpec {
+func (ExtString) Base64URL() StringSpec {
 	return StringSpec{
 		Pattern: []string{base64URLRegex},
 	}
 }
-func DataURI() StringSpec {
+func (ExtString) DataURI() StringSpec {
 	return StringSpec{
 		Pattern: []string{dataURIRegex},
 	}
 }
-func Latitude() StringSpec {
+func (ExtString) Latitude() StringSpec {
 	return StringSpec{
 		Pattern: []string{latitudeRegex},
 	}
 }
-func Longitude() StringSpec {
+func (ExtString) Longitude() StringSpec {
 	return StringSpec{
 		Pattern: []string{longitudeRegex},
 	}
 }
 
-func Hex() StringSpec {
+func (ExtString) Hex() StringSpec {
 	return StringSpec{
 		Pattern: []string{hexRegexp},
 	}
 }
-func HexColor() StringSpec {
+func (ExtString) HexColor() StringSpec {
 	return StringSpec{
 		Pattern: []string{hexcolorRegex},
 	}
 }
-func RGB() StringSpec {
+func (ExtString) RGB() StringSpec {
 	return StringSpec{
 		Pattern: []string{rgbRegex},
 	}
 }
-func RGBA() StringSpec {
+func (ExtString) RGBA() StringSpec {
 	return StringSpec{
 		Pattern: []string{rgbaRegex},
 	}
 }
-func HSL() StringSpec {
+func (ExtString) HSL() StringSpec {
 	return StringSpec{
 		Pattern: []string{hslRegex},
 	}
 }
-func HSLA() StringSpec {
+func (ExtString) HSLA() StringSpec {
 	return StringSpec{
 		Pattern: []string{hslaRegex},
 	}
 }
-func ASCII() StringSpec {
+func (ExtString) ASCII() StringSpec {
 	return StringSpec{
 		Pattern: []string{aSCIIRegex},
 	}
 }
-func PrintableASCII() StringSpec {
+func (ExtString) PrintableASCII() StringSpec {
 	return StringSpec{
 		Pattern: []string{printableASCIIRegex},
 	}

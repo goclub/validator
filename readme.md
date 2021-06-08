@@ -33,7 +33,7 @@ type CreateUser struct {
 func (v RequestCreateUser) VD(r *vd.Rule) error {
 	r.String(v.Email, vd.StringSpec{
 		Name:"邮箱地址",
-		Ext: []vd.StringSpec{vd.Email()},
+		Ext: []vd.StringSpec{vd.ExtString{}.Email()},
 	})
 	r.String(v.Nickname, vd.StringSpec{
 		Name:              "昵称",
