@@ -30,7 +30,7 @@ type CreateUser struct {
 实现 `CreateUser.VD(r *vd.Rule)` 方法
 
 ```go
-func (v RequestCreateUser) VD(r *vd.Rule) {
+func (v RequestCreateUser) VD(r *vd.Rule) error {
 	r.String(v.Email, vd.StringSpec{
 		Name:"邮箱地址",
 		Ext: []vd.StringSpec{vd.Email()},
@@ -48,6 +48,7 @@ func (v RequestCreateUser) VD(r *vd.Rule) {
 		Min:            vd.Int(18),
 		MinMessage:     "只允许成年人注册",
 	})
+	return nil
 }
 ```
 
