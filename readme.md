@@ -61,7 +61,9 @@ req := CreateUser{
     Nickname: "三儿",
     Age: 20,
 }
-report := checker.Check(req)
+report, err := checker.Check(req) ; if err != nil {
+    panic(err)// handle error
+}
 if report.Fail {
     log.Print(report.Message)
 } else {
