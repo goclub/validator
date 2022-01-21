@@ -1,6 +1,7 @@
 package vd_test
 
 import (
+	"fmt"
 	vd "github.com/goclub/validator"
 	"log"
 	"testing"
@@ -89,4 +90,23 @@ func (v RequestCreateUserAddress) VD(r *vd.Rule) {
 		Pattern: []string{`号`},
 		PatternMessage: "地址必须包含门牌号",
 	})
+}
+
+type LogKind uint8
+
+func (v LogKind) Validator() error {
+	switch v {
+	case 1:
+	case 2:
+	default:
+		return fmt.Errorf("kind can not be %v", v)
+	}
+	return nil
+}
+
+type Log struct {
+	Kind LogKind
+}
+func (v Log) VD(r *vd.Rule) {
+	r.Validator(v.Kind, "类型格式错误")
 }
