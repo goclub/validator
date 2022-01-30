@@ -1,3 +1,8 @@
+---
+permalink: /
+sidebarBasedOnContent: true
+---
+
 # validator
 
 > 类型安全的 Go Struct 验证器
