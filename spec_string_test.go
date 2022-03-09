@@ -122,6 +122,16 @@ func TestSpecStringPattern(t *testing.T) {
 			Name: "nimo",
 			Title: "abc",
 		}, Report{
+			Fail:    false,
+			Message: "",
+		})
+	}
+	{
+		CheckEqualAndNoError(t, c, SpecStringPattern{
+			Name: "nimo",
+			Title: "abc",
+			More: "ab",
+		}, Report{
 			Fail:    true,
 			Message: "更多开始结尾必须是a",
 		})
@@ -283,6 +293,12 @@ func TestSpectStringMinMax(t *testing.T) {
 	c := NewCN()
 	CheckEqualAndNoError(t, c, SpecStringMinMax{
 		Name: "",
+	}, Report{
+		Fail:    false,
+		Message: "",
+	})
+	CheckEqualAndNoError(t, c, SpecStringMinMax{
+		Name: "a",
 	}, Report{
 		Fail:    true,
 		Message: "姓名长度不能小于2",

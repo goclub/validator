@@ -37,9 +37,13 @@ func (spec StringSpec) render (message string, value interface{}) string {
 }
 func (r *Rule) String(v string, spec StringSpec) {
 	if r.Fail { return }
-	if v == "" && !spec.AllowEmpty {
-		r.Break(r.Format.StringNotAllowEmpty(spec.Name))
-		return
+	if v == "" {
+		if spec.AllowEmpty {
+			return
+		} else {
+			r.Break(r.Format.StringNotAllowEmpty(spec.Name))
+			return
+		}
 	}
 	if spec.CheckMinRuneLen(v, r) { return }
 	if spec.CheckMaxRuneLen(v, r) { return }
