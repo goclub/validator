@@ -18,7 +18,7 @@ go 主流的结构体校验器使用结构体标签配置规则，这种方式�
 ```go
 type exampleStruct2 struct {
   Name  string `valid:"-"`
-  Email string `valid:"email"` // 一旦写错单词只有运行期才能发现错误，且不容易记住各种语法
+  Email string `valid:"email"` // 一旦写错单词只有运行期才能发现错误，且难以记住各种验证语法
 }
 ```
 
