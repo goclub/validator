@@ -41,7 +41,7 @@ func (spec SliceSpec) CheckMinLen(v int, r *Rule) (fail bool) {
 		message := r.CreateMessage(spec.MinLenMessage, func() string {
 			return r.Format.SliceMinLen(spec.Name, v, min)
 		})
-		r.Break(spec.render(message, v))
+		r.Break(spec.render(message, v), spec.Path)
 	}
 	return r.Fail
 }
@@ -55,7 +55,7 @@ func (spec SliceSpec) CheckMaxLen(v int, r *Rule) (fail bool) {
 		message := r.CreateMessage(spec.MaxLenMessage, func() string {
 			return r.Format.SliceMaxLen(spec.Name, v, max)
 		})
-		r.Break(spec.render(message, v))
+		r.Break(spec.render(message, v), spec.Path)
 	}
 	return r.Fail
 }
@@ -65,7 +65,7 @@ func (spec SliceSpec) CheckUniqueStrings(v []string, r *Rule) (fail bool) {
 	if !pass {
 		if !pass {
 			message := r.Format.SliceUniqueStrings(spec.Name, repeatElement)
-			r.Break(spec.render(message, v))
+			r.Break(spec.render(message, v), spec.Path)
 		}
 	}
 	return r.Fail

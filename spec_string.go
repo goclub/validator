@@ -9,6 +9,7 @@ import (
 
 type StringSpec struct {
 	Name string
+	Path string
 	AllowEmpty bool
 	MinRuneLen int
 	MinRuneLenMessage string
@@ -41,7 +42,7 @@ func (r *Rule) String(v string, spec StringSpec) {
 		if spec.AllowEmpty {
 			return
 		} else {
-			r.Break(r.Format.StringNotAllowEmpty(spec.Name))
+			r.Break(r.Format.StringNotAllowEmpty(spec.Name), spec.Path)
 			return
 		}
 	}
@@ -71,7 +72,7 @@ func (spec StringSpec) CheckMaxRuneLen(v string, r *Rule) (fail bool) {
 		message := r.CreateMessage(spec.MaxRuneLenMessage, func() string {
 			return r.Format.StringMaxRuneLen(spec.Name, v, spec.MaxRuneLen)
 		})
-		r.Break(spec.render(message, v))
+		r.Break(spec.render(message, v), spec.Path)
 	}
 	return r.Fail
 }
@@ -83,7 +84,7 @@ func (spec StringSpec) CheckMinRuneLen(v string, r *Rule) (fail bool) {
 		message := r.CreateMessage(spec.MinRuneLenMessage, func() string {
 			return r.Format.StringMinRuneLen(spec.Name, v, spec.MinRuneLen)
 		})
-		r.Break(spec.render(message, v))
+		r.Break(spec.render(message, v), spec.Path)
 	}
 	return r.Fail
 }
@@ -92,7 +93,7 @@ type patternData struct {
 	PatternMessage string
 	Name string
 }
-func checkPattern(data patternData, render func(string, interface{}) string, v string, r *Rule) (fail bool) {
+func checkPattern(data patternData, render func(string, interface{}) string, v string, r *Rule, path string) (fail bool) {
 	if len(data.Pattern) == 0 {
 		return false
 	}
@@ -103,7 +104,7 @@ func checkPattern(data patternData, render func(string, interface{}) string, v s
 			// 所以这里采取打印错误并验证错误的处理 @nimoc 2021年02月12日01:20:45 (新年快乐)
 			log.Print(err)
 			debug.PrintStack()
-			r.Break("goclub/validator: regexp pattern error(" + pattern + ")")
+			r.Break("goclub/validator: regexp pattern error(" + pattern + ")", path)
 			return
 		}
 		pass := matched
@@ -111,7 +112,7 @@ func checkPattern(data patternData, render func(string, interface{}) string, v s
 			message := r.CreateMessage(data.PatternMessage, func() string {
 				return r.Format.Pattern(data.Name, v, data.Pattern, pattern)
 			})
-			r.Break(render(message, v))
+			r.Break(render(message, v), path)
 			break
 		}
 	}
@@ -123,14 +124,14 @@ func (spec StringSpec) CheckPattern(v string, r *Rule) (fail bool) {
 		Pattern:        spec.Pattern,
 		PatternMessage: spec.PatternMessage,
 		Name:           spec.Name,
-	}, spec.render, v, r)
+	}, spec.render, v, r, spec.Path)
 }
 type banPatternData struct {
 	BanPattern []string
 	PatternMessage string
 	Name string
 }
-func checkBanPattern(data banPatternData, render func(string, interface{}) string, v string, r *Rule) (fail bool) {
+func checkBanPattern(data banPatternData, render func(string, interface{}) string, v string, r *Rule, path string) (fail bool) {
 	if len(data.BanPattern) == 0 {
 		return false
 	}
@@ -141,14 +142,14 @@ func checkBanPattern(data banPatternData, render func(string, interface{}) strin
 			// 所以这里采取打印错误并验证错误的处理 @nimoc 2021年02月12日01:20:45 (新年快乐)
 			log.Print(err)
 			debug.PrintStack()
-			r.Break("goclub/validator: regexp ban pattern error(" + pattern + ")")
+			r.Break("goclub/validator: regexp ban pattern error(" + pattern + ")", path)
 		}
 		pass := !matched
 		if !pass {
 			message := r.CreateMessage(data.PatternMessage, func() string {
 				return r.Format.BanPattern(data.Name, v, data.BanPattern, pattern)
 			})
-			r.Break(render(message, v))
+			r.Break(render(message, v), path)
 			break
 		}
 	}
@@ -159,7 +160,7 @@ func (spec StringSpec) CheckBanPattern(v string, r *Rule) (fail bool) {
 		BanPattern:     spec.BanPattern,
 		PatternMessage: spec.PatternMessage,
 		Name:           spec.Name,
-	}, spec.render, v, r)
+	}, spec.render, v, r, spec.Path)
 }
 func (spec StringSpec) CheckEnum(v string, r *Rule) (fail bool) {
 	if len(spec.Enum) == 0 {
@@ -173,7 +174,7 @@ func (spec StringSpec) CheckEnum(v string, r *Rule) (fail bool) {
 	}
 	if !pass {
 		message := r.Format.StringEnum(spec.Name, v, spec.Enum)
-		r.Break(spec.render(message, v))
+		r.Break(spec.render(message, v), spec.Path)
 	}
 	return r.Fail
 }

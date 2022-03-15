@@ -7,19 +7,21 @@ import (
 type Rule struct {
 	Fail bool
 	Message string
+	Path string
 	Format Formatter
 }
-func (r *Rule) Break(message string) {
+func (r *Rule) Break(message string, path string) {
 	r.Fail = true
 	r.Message = message
+	r.Path = path
 }
 
 func (r *Rule) Validator(v interface {
 	Validator() error
-}, failMessage string) {
+}, failMessage string, path string) {
 	if r.Fail { return }
 	err := v.Validator() ; if err != nil {
-	    r.Break(failMessage)
+	    r.Break(failMessage, path)
 	}
 }
 
@@ -31,9 +33,8 @@ func (r Rule) CreateMessage(message string, customMessage func () string) string
 	}
 	return message
 }
-func (r *Rule) Check(pass bool, message string) {
+func (r *Rule) Check(pass bool, message string, path string) {
 	if !pass {
-		r.Fail = true
-		r.Message = message
+		r.Break(message, path)
 	}
 }

@@ -8,6 +8,7 @@ import (
 
 type FloatSpec struct {
 	Name string
+	Path string
 	// AllowZero bool // 暂时取消 AllowZero，目的是降低使用者学习成本，观察一段时间后再决定是否完全去掉 (2020年08月07日 by @nimoc)
 	Min OptionFloat
 	MinMessage string
@@ -50,7 +51,7 @@ func (spec FloatSpec) CheckMin(v float64, r *Rule) (fail bool) {
 		message := r.CreateMessage(spec.MinMessage, func() string {
 			return r.Format.FloatMin(spec.Name, v, min)
 		})
-		r.Break(spec.render(message, v))
+		r.Break(spec.render(message, v), spec.Path)
 	}
 	return
 }
@@ -64,7 +65,7 @@ func (spec FloatSpec) CheckMax(v float64, r *Rule) (fail bool) {
 		message := r.CreateMessage(spec.MaxMessage, func() string {
 			return r.Format.FloatMax(spec.Name, v, max)
 		})
-		r.Break(spec.render(message, v))
+		r.Break(spec.render(message, v), spec.Path)
 	}
 	return
 }
@@ -73,7 +74,7 @@ func (spec FloatSpec) CheckPattern(v float64, r *Rule) (fail bool) {
 		Pattern:        spec.Pattern,
 		PatternMessage: spec.PatternMessage,
 		Name:           spec.Name,
-	}, spec.render, xconv.Float64String(v), r)
+	}, spec.render, xconv.Float64String(v), r, spec.Path)
 }
 
 func (spec FloatSpec) CheckBanPattern(v float64, r *Rule) (fail bool) {
@@ -81,5 +82,5 @@ func (spec FloatSpec) CheckBanPattern(v float64, r *Rule) (fail bool) {
 		BanPattern:        spec.BanPattern,
 		PatternMessage: spec.PatternMessage,
 		Name:           spec.Name,
-	}, spec.render, xconv.Float64String(v), r)
+	}, spec.render, xconv.Float64String(v), r, spec.Path)
 }

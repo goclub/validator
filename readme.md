@@ -67,7 +67,8 @@ req := CreateUser{
     Age: 20,
 }
 report, err := checker.Check(req) ; if err != nil {
-    panic(err)// handle error
+    // handle error
+	log.Printf("%+v", err)
 }
 if report.Fail {
     log.Print(report.Message)

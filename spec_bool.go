@@ -18,6 +18,7 @@ package vd
 // }
 type BoolSpec struct {
 	Name string
+	Path string
 }
 
 func (r *Rule) Bool(v bool, spec BoolSpec) {

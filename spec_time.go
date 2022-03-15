@@ -6,6 +6,7 @@ import (
 
 type TimeSpec struct {
 	Name string
+	Path string
 	AllowZero bool
 	BeforeIt time.Time
 	AfterIt time.Time
@@ -52,7 +53,7 @@ func (r *Rule) coreTimeRange(allowZero bool, data TimeRange) {
 func (r *Rule) Time(v time.Time, spec TimeSpec) {
 	if r.Fail {return}
 	if spec.AllowZero == false && v.IsZero() {
-		r.Break(r.Format.TimeNotAllowZero(spec.Name))
+		r.Break(r.Format.TimeNotAllowZero(spec.Name), spec.Path)
 		return
 	}
 	if spec.CheckBeforeIt(v, r) { return }
@@ -65,7 +66,7 @@ func (spec TimeSpec) CheckBeforeIt(v time.Time, r *Rule) (fail bool) {
 		return false
 	}
 	if v.Before(spec.BeforeIt) == false {
-		r.Break(r.Format.TimeBeforeIt(spec.Name, v, spec.BeforeIt))
+		r.Break(r.Format.TimeBeforeIt(spec.Name, v, spec.BeforeIt), spec.Path)
 	}
 	return r.Fail
 }
@@ -75,7 +76,7 @@ func (spec TimeSpec) CheckAfterIt(v time.Time, r *Rule) (fail bool) {
 		return false
 	}
 	if v.After(spec.AfterIt) == false {
-		r.Break(r.Format.TimeAfterIt(spec.Name, v, spec.AfterIt))
+		r.Break(r.Format.TimeAfterIt(spec.Name, v, spec.AfterIt), spec.Path)
 	}
 	return r.Fail
 }
@@ -88,7 +89,7 @@ func (spec TimeSpec) CheckBeforeOrEqualIt(v time.Time, r *Rule) (fail bool) {
 		return false
 	}
 	if v.Before(spec.BeforeOrEqualIt) == false {
-		r.Break(r.Format.TimeBeforeOrEqualIt(spec.Name, v, spec.BeforeOrEqualIt))
+		r.Break(r.Format.TimeBeforeOrEqualIt(spec.Name, v, spec.BeforeOrEqualIt), spec.Path)
 	}
 	return r.Fail
 }
@@ -101,7 +102,7 @@ func (spec TimeSpec) CheckAfterOrEqualIt(v time.Time, r *Rule) (fail bool) {
 		return false
 	}
 	if v.After(spec.AfterOrEqualIt) == false {
-		r.Break(r.Format.TimeAfterOrEqualIt(spec.Name, v, spec.AfterOrEqualIt))
+		r.Break(r.Format.TimeAfterOrEqualIt(spec.Name, v, spec.AfterOrEqualIt), spec.Path)
 	}
 	return r.Fail
 }

@@ -108,5 +108,5 @@ type Log struct {
 	Kind LogKind
 }
 func (v Log) VD(r *vd.Rule) {
-	r.Validator(v.Kind, "类型格式错误")
+	r.Validator(v.Kind, "类型格式错误", "")
 }

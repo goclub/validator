@@ -10,6 +10,7 @@ type SpecStringMinLen struct {
 func (s SpecStringMinLen) VD(r *Rule) (err error){
 	r.String(s.Name, StringSpec{
 		Name:              "姓名",
+		Path: "name",
 		MinRuneLen:        4,
 	})
 	return nil
@@ -30,10 +31,12 @@ func Test_SpecString_MinLen(t *testing.T) {
 	
 	CheckEqualAndNoError(t, c, SpecStringMinLen{Name:"ni"}, Report{
 		Fail:    true,
+		Path: "name",
 		Message: "姓名长度不能小于4",
 	})
 	CheckEqualAndNoError(t, c, SpecStringMinLen{Name:"nim"}, Report{
 		Fail:    true,
+		Path: "name",
 		Message: "姓名长度不能小于4",
 	})
 	CheckEqualAndNoError(t, c, SpecStringMinLen{Name:"nimo"}, Report{

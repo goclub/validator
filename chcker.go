@@ -14,6 +14,7 @@ type Data interface {
 type Report struct {
 	Fail bool
 	Message string
+	Path string
 }
 func (checker Checker) Check(data Data) (report Report, err error) {
 	rValue := reflect.ValueOf(data)
@@ -37,6 +38,7 @@ func (checker Checker) reflectCheck(rValue reflect.Value, rType reflect.Type) (r
 		if rule.Fail {
 			report.Fail = true
 			report.Message = rule.Message
+			report.Path = rule.Path
 			return
 		}
 	}

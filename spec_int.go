@@ -8,6 +8,7 @@ import (
 
 type IntSpec struct {
 	Name string
+	Path string
 	// AllowZero bool // 暂时取消 AllowZero，目的是降低使用者学习成本，观察一段时间后再决定是否完全去掉 (2020年08月07日 by @nimoc)
 	Min OptionInt
 	MinMessage string
@@ -77,7 +78,7 @@ func (spec IntSpec) CheckMin(v int, r *Rule) (fail bool) {
 		message := r.CreateMessage(spec.MinMessage, func() string {
 			return r.Format.IntMin(spec.Name, v, min)
 		})
-		r.Break(spec.render(message, v))
+		r.Break(spec.render(message, v), spec.Path)
 	}
 	return
 }
@@ -91,7 +92,7 @@ func (spec IntSpec) CheckMax(v int, r *Rule) (fail bool) {
 		message := r.CreateMessage(spec.MaxMessage, func() string {
 			return r.Format.IntMax(spec.Name, v, max)
 		})
-		r.Break(spec.render(message, v))
+		r.Break(spec.render(message, v), spec.Path)
 	}
 	return
 }
@@ -100,7 +101,7 @@ func (spec IntSpec) CheckPattern(v int, r *Rule) (fail bool) {
 		Pattern:        spec.Pattern,
 		PatternMessage: spec.PatternMessage,
 		Name:           spec.Name,
-	}, spec.render, xconv.IntString(v), r)
+	}, spec.render, xconv.IntString(v), r, spec.Path)
 }
 
 func (spec IntSpec) CheckBanPattern(v int, r *Rule) (fail bool) {
@@ -108,5 +109,5 @@ func (spec IntSpec) CheckBanPattern(v int, r *Rule) (fail bool) {
 		BanPattern:        spec.BanPattern,
 		PatternMessage: spec.PatternMessage,
 		Name:           spec.Name,
-	}, spec.render, xconv.IntString(v), r)
+	}, spec.render, xconv.IntString(v), r, spec.Path)
 }
