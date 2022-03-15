@@ -81,4 +81,4 @@ if report.Fail {
 初看会觉得 `goclub/validator` 的验证方式没有结构体标签验证便捷，用过一段时间后会体会到类型安全的好处。
 不需要反复查阅文档确认结构体标签的规则是否正确，通过 查看 `vd.StringSpec` 结构体的字段即可知道有哪些配置方式。
 
-更多示例：[example_test.go](https://github.com/goclub/validator/blob/main/example_test.go)
+更多示例：[example_test.go?embed](https://github.com/goclub/validator/blob/main/example_test.go)
