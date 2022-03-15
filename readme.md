@@ -12,12 +12,13 @@ import vd "github.com/goclub/validator"
 ```
 
 go 主流的结构体校验器使用结构体标签配置规则，这种方式类型不安全，一旦结构体标签写错将无法通过编译期检查出来。
+
 例如：
 
 ```go
 type exampleStruct2 struct {
   Name  string `valid:"-"`
-  Email string `valid:"email"` // 一旦单词写错只有运行期才能发现错误，且不容易记住各种语法
+  Email string `valid:"email"` // 一旦写错单词只有运行期才能发现错误，且不容易记住各种语法
 }
 ```
 
