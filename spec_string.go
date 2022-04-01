@@ -11,9 +11,11 @@ type StringSpec struct {
 	Name string
 	Path string
 	AllowEmpty bool
-	MinRuneLen int
+	RuneLen uint64
+	RuneLenMessage string
+	MinRuneLen uint64
 	MinRuneLenMessage string
-	MaxRuneLen int
+	MaxRuneLen uint64
 	MaxRuneLenMessage string
 	Pattern []string
 	BanPattern []string
@@ -46,6 +48,7 @@ func (r *Rule) String(v string, spec StringSpec) {
 			return
 		}
 	}
+	if spec.CheckRuneLen(v, r) { return }
 	if spec.CheckMinRuneLen(v, r) { return }
 	if spec.CheckMaxRuneLen(v, r) { return }
 	if spec.CheckPattern   (v, r) { return }
@@ -61,13 +64,26 @@ func (r *Rule) String(v string, spec StringSpec) {
 		if r.Fail {return}
 	}
 }
-
+func (spec StringSpec) CheckRuneLen(v string, r *Rule) (fail bool) {
+	if spec.RuneLen == 0 {
+		return false
+	}
+	length := len([]rune(v))
+	pass := uint64(length) == spec.RuneLen
+	if !pass {
+		message := r.CreateMessage(spec.RuneLenMessage, func() string {
+			return r.Format.StringRuneLen(spec.Name, v, spec.RuneLen)
+		})
+		r.Break(spec.render(message, v), spec.Path)
+	}
+	return r.Fail
+}
 func (spec StringSpec) CheckMaxRuneLen(v string, r *Rule) (fail bool) {
 	if spec.MaxRuneLen == 0 {
 		return false
 	}
 	length := len([]rune(v))
-	pass := length <= spec.MaxRuneLen
+	pass := uint64(length) <= spec.MaxRuneLen
 	if !pass {
 		message := r.CreateMessage(spec.MaxRuneLenMessage, func() string {
 			return r.Format.StringMaxRuneLen(spec.Name, v, spec.MaxRuneLen)
@@ -79,7 +95,7 @@ func (spec StringSpec) CheckMaxRuneLen(v string, r *Rule) (fail bool) {
 
 func (spec StringSpec) CheckMinRuneLen(v string, r *Rule) (fail bool) {
 	length := len([]rune(v))
-	pass := length >= spec.MinRuneLen
+	pass := uint64(length) >= spec.MinRuneLen
 	if !pass {
 		message := r.CreateMessage(spec.MinRuneLenMessage, func() string {
 			return r.Format.StringMinRuneLen(spec.Name, v, spec.MinRuneLen)

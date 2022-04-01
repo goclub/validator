@@ -26,6 +26,55 @@ func (s SpecStringMinLenCustomMessage) VD(r *Rule) (err error){
 	})
 	return nil
 }
+type SpecStringRuneLen struct {
+	Name string
+}
+func (s SpecStringRuneLen) VD(r *Rule) (err error){
+	r.String(s.Name, StringSpec{
+		Name:              "姓名",
+		Path: "name",
+		RuneLen:        4,
+	})
+	return nil
+};
+type SpecStringRuneLenCustomMessage struct {
+	Name string
+}
+func (s SpecStringRuneLenCustomMessage) VD(r *Rule) (err error){
+	r.String(s.Name, StringSpec{
+		Name:              "姓名",
+		RuneLen:        4,
+		RuneLenMessage: "姓名长度必须是{{RuneLen}}你输入的是{{Value}}",
+	})
+	return nil
+}
+func Test_SpecString_RuneLen(t *testing.T) {
+	c := NewCN()
+
+	CheckEqualAndNoError(t, c, SpecStringRuneLen{Name:"ni"}, Report{
+		Fail:    true,
+		Path: "name",
+		Message: "姓名长度需等于4",
+	})
+	CheckEqualAndNoError(t, c, SpecStringRuneLen{Name:"nim"}, Report{
+		Fail:    true,
+		Path: "name",
+		Message: "姓名长度需等于4",
+	})
+	CheckEqualAndNoError(t, c, SpecStringRuneLen{Name:"nimo"}, Report{
+		Fail:    false,
+		Message: "",
+	})
+	CheckEqualAndNoError(t, c, SpecStringRuneLen{Name:"nimoc"}, Report{
+		Fail:    true,
+		Message: "姓名长度需等于4",
+		Path: "name",
+	})
+	CheckEqualAndNoError(t, c, SpecStringRuneLenCustomMessage{Name:"ni"}, Report{
+		Fail:    true,
+		Message: "姓名长度必须是4你输入的是ni",
+	})
+}
 func Test_SpecString_MinLen(t *testing.T) {
 	c := NewCN()
 	

@@ -3,6 +3,7 @@ package vd
 import (
 	"github.com/goclub/conv"
 	xtime "github.com/goclub/time"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -12,8 +13,9 @@ type Formatter interface {
 	BanPattern   (name string, value string, banPattern []string, failBanPattern string) string
 
 	StringNotAllowEmpty(name string) string
-	StringMinRuneLen(name string, value string, length int) string
-	StringMaxRuneLen(name string, value string, length int) string
+	StringRuneLen(name string, value string, length uint64) string
+	StringMinRuneLen(name string, value string, length uint64) string
+	StringMaxRuneLen(name string, value string, length uint64) string
 	StringEnum (name string, value string, enum []string) string
 
 	IntNotAllowEmpty(name string) string
@@ -38,14 +40,18 @@ type Formatter interface {
 
 }
 type CNFormat struct {}
+
 func (CNFormat) StringNotAllowEmpty(name string) string {
 	return name  + "必填"
 }
-func (CNFormat) StringMinRuneLen(name string, value string, length int) string {
-	return name + "长度不能小于" + xconv.IntString(length)
+func (f CNFormat) StringRuneLen(name string, value string, length uint64) string {
+	return name + "长度需等于" + strconv.FormatUint(length, 10)
 }
-func (CNFormat) StringMaxRuneLen(name string, value string, length int) string {
-	return name + "长度不能大于" + xconv.IntString(length)
+func (CNFormat) StringMinRuneLen(name string, value string, length uint64) string {
+	return name + "长度不能小于" + strconv.FormatUint(length, 10)
+}
+func (CNFormat) StringMaxRuneLen(name string, value string, length uint64) string {
+	return name + "长度不能大于" + strconv.FormatUint(length, 10)
 }
 func (CNFormat) Pattern(name string, value string, pattern []string, failPattern string) string {
 	return name + "格式错误"
