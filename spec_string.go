@@ -44,7 +44,7 @@ func (r *Rule) String(v string, spec StringSpec) {
 		if spec.AllowEmpty {
 			return
 		} else {
-			r.Break(r.Format.StringNotAllowEmpty(spec.Name), spec.Path)
+			r.Break(r.Format.StringNotAllowEmpty(spec.Name, spec.Path), spec.Path)
 			return
 		}
 	}
@@ -72,7 +72,7 @@ func (spec StringSpec) CheckRuneLen(v string, r *Rule) (fail bool) {
 	pass := uint64(length) == spec.RuneLen
 	if !pass {
 		message := r.CreateMessage(spec.RuneLenMessage, func() string {
-			return r.Format.StringRuneLen(spec.Name, v, spec.RuneLen)
+			return r.Format.StringRuneLen(spec.Name, spec.Path, v, spec.RuneLen)
 		})
 		r.Break(spec.render(message, v), spec.Path)
 	}
@@ -86,7 +86,7 @@ func (spec StringSpec) CheckMaxRuneLen(v string, r *Rule) (fail bool) {
 	pass := uint64(length) <= spec.MaxRuneLen
 	if !pass {
 		message := r.CreateMessage(spec.MaxRuneLenMessage, func() string {
-			return r.Format.StringMaxRuneLen(spec.Name, v, spec.MaxRuneLen)
+			return r.Format.StringMaxRuneLen(spec.Name, spec.Path, v, spec.MaxRuneLen)
 		})
 		r.Break(spec.render(message, v), spec.Path)
 	}
@@ -98,7 +98,7 @@ func (spec StringSpec) CheckMinRuneLen(v string, r *Rule) (fail bool) {
 	pass := uint64(length) >= spec.MinRuneLen
 	if !pass {
 		message := r.CreateMessage(spec.MinRuneLenMessage, func() string {
-			return r.Format.StringMinRuneLen(spec.Name, v, spec.MinRuneLen)
+			return r.Format.StringMinRuneLen(spec.Name, spec.Path, v, spec.MinRuneLen)
 		})
 		r.Break(spec.render(message, v), spec.Path)
 	}
@@ -108,6 +108,7 @@ type patternData struct {
 	Pattern []string
 	PatternMessage string
 	Name string
+	Path string
 }
 func checkPattern(data patternData, render func(string, interface{}) string, v string, r *Rule, path string) (fail bool) {
 	if len(data.Pattern) == 0 {
@@ -126,7 +127,7 @@ func checkPattern(data patternData, render func(string, interface{}) string, v s
 		pass := matched
 		if !pass {
 			message := r.CreateMessage(data.PatternMessage, func() string {
-				return r.Format.Pattern(data.Name, v, data.Pattern, pattern)
+				return r.Format.Pattern(data.Name, data.Path,  v, data.Pattern, pattern)
 			})
 			r.Break(render(message, v), path)
 			break
@@ -140,12 +141,14 @@ func (spec StringSpec) CheckPattern(v string, r *Rule) (fail bool) {
 		Pattern:        spec.Pattern,
 		PatternMessage: spec.PatternMessage,
 		Name:           spec.Name,
+		Path: spec.Path,
 	}, spec.render, v, r, spec.Path)
 }
 type banPatternData struct {
 	BanPattern []string
 	PatternMessage string
 	Name string
+	Path string
 }
 func checkBanPattern(data banPatternData, render func(string, interface{}) string, v string, r *Rule, path string) (fail bool) {
 	if len(data.BanPattern) == 0 {
@@ -163,7 +166,7 @@ func checkBanPattern(data banPatternData, render func(string, interface{}) strin
 		pass := !matched
 		if !pass {
 			message := r.CreateMessage(data.PatternMessage, func() string {
-				return r.Format.BanPattern(data.Name, v, data.BanPattern, pattern)
+				return r.Format.BanPattern(data.Name, data.Path,  v, data.BanPattern, pattern)
 			})
 			r.Break(render(message, v), path)
 			break
@@ -176,6 +179,7 @@ func (spec StringSpec) CheckBanPattern(v string, r *Rule) (fail bool) {
 		BanPattern:     spec.BanPattern,
 		PatternMessage: spec.PatternMessage,
 		Name:           spec.Name,
+		Path:           spec.Path,
 	}, spec.render, v, r, spec.Path)
 }
 func (spec StringSpec) CheckEnum(v string, r *Rule) (fail bool) {
@@ -189,7 +193,7 @@ func (spec StringSpec) CheckEnum(v string, r *Rule) (fail bool) {
 		}
 	}
 	if !pass {
-		message := r.Format.StringEnum(spec.Name, v, spec.Enum)
+		message := r.Format.StringEnum(spec.Name, spec.Path, v, spec.Enum)
 		r.Break(spec.render(message, v), spec.Path)
 	}
 	return r.Fail

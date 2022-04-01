@@ -76,7 +76,7 @@ func (spec IntSpec) CheckMin(v int, r *Rule) (fail bool) {
 	pass := v >= min
 	if !pass {
 		message := r.CreateMessage(spec.MinMessage, func() string {
-			return r.Format.IntMin(spec.Name, v, min)
+			return r.Format.IntMin(spec.Name, spec.Path, v, min)
 		})
 		r.Break(spec.render(message, v), spec.Path)
 	}
@@ -90,7 +90,7 @@ func (spec IntSpec) CheckMax(v int, r *Rule) (fail bool) {
 	pass := v <= max
 	if !pass {
 		message := r.CreateMessage(spec.MaxMessage, func() string {
-			return r.Format.IntMax(spec.Name, v, max)
+			return r.Format.IntMax(spec.Name, spec.Path,  v, max)
 		})
 		r.Break(spec.render(message, v), spec.Path)
 	}
@@ -101,6 +101,7 @@ func (spec IntSpec) CheckPattern(v int, r *Rule) (fail bool) {
 		Pattern:        spec.Pattern,
 		PatternMessage: spec.PatternMessage,
 		Name:           spec.Name,
+		Path: spec.Path,
 	}, spec.render, xconv.IntString(v), r, spec.Path)
 }
 
@@ -109,5 +110,6 @@ func (spec IntSpec) CheckBanPattern(v int, r *Rule) (fail bool) {
 		BanPattern:        spec.BanPattern,
 		PatternMessage: spec.PatternMessage,
 		Name:           spec.Name,
+		Path:           spec.Path,
 	}, spec.render, xconv.IntString(v), r, spec.Path)
 }

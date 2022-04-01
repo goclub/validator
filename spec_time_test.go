@@ -63,52 +63,6 @@ func (v TimeRange1) VD(r *Rule) {
 		Name:"开始时间",
 		BeforeIt: v.EndTime,
 	})
-	r.Time(v.EndTime, TimeSpec{
-		Name:"结束时间",
-		AfterIt: v.StartTime,
-	})
-}
-
-type TimeRange2 struct {
-	StartTime time.Time
-	EndTime time.Time
-}
-func (v TimeRange2) VD(r *Rule) error {
-	r.TimeRange(TimeRange{"开始时间", v.StartTime,"结束时间", v.EndTime,})
-	return nil
-}
-
-func TestRule_TimeRange2(t *testing.T) {
-	c := NewCN()
-	// start end 互相约束
-	CheckEqualAndNoError(t, c, TimeRange2{
-		StartTime: now,
-		EndTime: now.Add(time.Second*2),
-	}, Report{
-		Fail:    false,
-		Message: "",
-	})
-	CheckEqualAndNoError(t, c, TimeRange2{
-		StartTime: now,
-		EndTime: now,
-	}, Report{
-		Fail:    false,
-		Message: "",
-	})
-	CheckEqualAndNoError(t, c, TimeRange2{
-		StartTime: now.Add(time.Second),
-		EndTime: now,
-	}, Report{
-		Fail:    true,
-		Message: "开始时间" + xtime.FormatChinaTime(now.Add(time.Second)) + "必须等于" + xtime.FormatChinaTime(now) + "或之前",
-	})
-	CheckEqualAndNoError(t, c, TimeRange2{
-		StartTime: now,
-		EndTime: now.Add(-time.Second),
-	}, Report{
-		Fail:    true,
-		Message: "开始时间" + xtime.FormatChinaTime(now) + "必须等于" + xtime.FormatChinaTime(now.Add(-time.Second)) + "或之前",
-	})
 }
 
 type TestAfterIt struct {
@@ -170,7 +124,7 @@ func TestRule_TimeAfterOrEqualIt(t *testing.T) {
 		now.Add(-time.Second),
 	}, Report{
 		Fail:    true,
-		Message: "v" + xtime.FormatChinaTime(now.Add(-time.Second)) + "必须等于" + xtime.FormatChinaTime(now) + "或之后",
+		Message: "v" + xtime.FormatChinaTime(now.Add(-time.Second)) + "必须在" + xtime.FormatChinaTime(now) + "之后，或等于",
 	})
 	CheckEqualAndNoError(t, c, TestAfterOrEqualIt{
 		now.Add(time.Second*1),
@@ -240,7 +194,7 @@ func TestRule_TimeBeforeOrEqualIt(t *testing.T) {
 		now.Add(time.Second),
 	}, Report{
 		Fail:    true,
-		Message: "v" + xtime.FormatChinaTime(now.Add(time.Second)) + "必须等于" + xtime.FormatChinaTime(now) + "或之前",
+		Message: "v" + xtime.FormatChinaTime(now.Add(time.Second)) + "必须在" + xtime.FormatChinaTime(now) + "之前，或等于",
 	})
 	CheckEqualAndNoError(t, c, TestBeforeOrEqualIt{
 		now.Add(-time.Second*1),

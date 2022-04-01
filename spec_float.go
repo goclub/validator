@@ -49,7 +49,7 @@ func (spec FloatSpec) CheckMin(v float64, r *Rule) (fail bool) {
 	pass := v >= min
 	if !pass {
 		message := r.CreateMessage(spec.MinMessage, func() string {
-			return r.Format.FloatMin(spec.Name, v, min)
+			return r.Format.FloatMin(spec.Name, spec.Path, v, min)
 		})
 		r.Break(spec.render(message, v), spec.Path)
 	}
@@ -63,7 +63,7 @@ func (spec FloatSpec) CheckMax(v float64, r *Rule) (fail bool) {
 	pass := v <= max
 	if !pass {
 		message := r.CreateMessage(spec.MaxMessage, func() string {
-			return r.Format.FloatMax(spec.Name, v, max)
+			return r.Format.FloatMax(spec.Name, spec.Path, v, max)
 		})
 		r.Break(spec.render(message, v), spec.Path)
 	}
@@ -74,6 +74,7 @@ func (spec FloatSpec) CheckPattern(v float64, r *Rule) (fail bool) {
 		Pattern:        spec.Pattern,
 		PatternMessage: spec.PatternMessage,
 		Name:           spec.Name,
+		Path:           spec.Path,
 	}, spec.render, xconv.Float64String(v), r, spec.Path)
 }
 
@@ -82,5 +83,6 @@ func (spec FloatSpec) CheckBanPattern(v float64, r *Rule) (fail bool) {
 		BanPattern:        spec.BanPattern,
 		PatternMessage: spec.PatternMessage,
 		Name:           spec.Name,
+		Path:           spec.Path,
 	}, spec.render, xconv.Float64String(v), r, spec.Path)
 }
