@@ -4,6 +4,7 @@ import (
 	"errors"
 	"reflect"
 )
+
 type Checker struct {
 	Format Formatter
 }
@@ -12,15 +13,16 @@ type Data interface {
 	VD(r *Rule) (err error)
 }
 type Report struct {
-	Fail bool
+	Fail    bool
 	Message string
-	Path string
+	Path    string
 }
+
 func (checker Checker) Check(data Data) (report Report, err error) {
 	rValue := reflect.ValueOf(data)
 	rType := rValue.Type()
 	if rType.Kind() == reflect.Ptr {
-		err = errors.New("goclub/validator: Check(data) data ("+ rType.Name() + ") must be pointer")
+		err = errors.New("goclub/validator: Check(data) data (" + rType.Name() + ") must be pointer")
 		return
 	}
 	return checker.reflectCheck(rValue, rType)
@@ -32,8 +34,9 @@ func (checker Checker) reflectCheck(rValue reflect.Value, rType reflect.Type) (r
 		rule := Rule{
 			Format: checker.Format,
 		}
-		err = v.VD(&rule) ; if err != nil {
-		    return
+		err = v.VD(&rule)
+		if err != nil {
+			return
 		}
 		if rule.Fail {
 			report.Fail = true
@@ -42,13 +45,30 @@ func (checker Checker) reflectCheck(rValue reflect.Value, rType reflect.Type) (r
 			return
 		}
 	}
-	for i:=0; i<rType.NumField();i++ {
+	for i := 0; i < rType.NumField(); i++ {
 		rValueItem := rValue.Field(i)
 		structField := rType.Field(i)
 		switch structField.Type.Kind() {
+		case reflect.Slice:
+			sliceLen := rValueItem.Len()
+			for i := 0; i < sliceLen; i++ {
+				sliceItem := rValueItem.Index(i)
+				sliceItemType := sliceItem.Type()
+				if sliceItemType.Kind() == reflect.Struct {
+					report, err = checker.reflectCheck(sliceItem, sliceItemType)
+					if err != nil {
+						return
+					}
+					if report.Fail {
+						return
+					}
+				}
+			}
+
 		case reflect.Struct:
-			report, err = checker.reflectCheck(rValueItem, structField.Type) ; if err != nil {
-			    return
+			report, err = checker.reflectCheck(rValueItem, structField.Type)
+			if err != nil {
+				return
 			}
 			if report.Fail {
 				return
@@ -57,4 +77,3 @@ func (checker Checker) reflectCheck(rValue reflect.Value, rType reflect.Type) (r
 	}
 	return
 }
-
