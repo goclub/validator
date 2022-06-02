@@ -5,11 +5,12 @@ import (
 	"log"
 	"reflect"
 	"runtime/debug"
+	"strconv"
 )
 
-func EnumValues (v interface{}) (enum []string) {
+func EnumValues(v interface{}) (enum []string) {
 	rValue := reflect.ValueOf(v)
-	for i:=0;i<rValue.NumField();i++ {
+	for i := 0; i < rValue.NumField(); i++ {
 		itemValue := rValue.Field(i)
 		var value string
 		if itemValue.Type().Kind() == reflect.String {
@@ -28,4 +29,8 @@ func EnumValues (v interface{}) (enum []string) {
 		return []string{errorMessage}
 	}
 	return
+}
+func PathIndex(path string, index int) string {
+	return path + "." + strconv.FormatInt(int64(index), 10)
+
 }
