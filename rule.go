@@ -18,7 +18,7 @@ func (r *Rule) Break(message string, path string) {
 }
 
 func (r *Rule) Validator(v interface {
-	Validator() error
+	Validator(err ...error) error
 }, failMessage string, path string) {
 	if r.Fail {
 		return
