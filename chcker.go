@@ -52,7 +52,7 @@ func (checker Checker) reflectCheck(rValue reflect.Value, rType reflect.Type, pa
 		rValueItem := rValue.Field(i)
 		structField := rType.Field(i)
 		var oldPath []string
-		copy(path, oldPath)
+		oldPath = append([]string{}, path...)
 		switch structField.Type.Kind() {
 		case reflect.Slice:
 			sliceLen := rValueItem.Len()
@@ -91,7 +91,10 @@ func (checker Checker) reflectCheck(rValue reflect.Value, rType reflect.Type, pa
 			if report.Fail {
 				return
 			}
+		default:
+			// 其他类型跳过
 		}
+
 		path = oldPath
 	}
 	return

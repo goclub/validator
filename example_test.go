@@ -131,7 +131,7 @@ func (v RequestCreateUserAddress) VD(r *vd.Rule) (err error) {
 
 type LogKind uint8
 
-func (v LogKind) Validator() error {
+func (v LogKind) Validator(err ...error) error {
 	switch v {
 	case 1:
 	case 2:
