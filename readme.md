@@ -27,7 +27,7 @@ type exampleStruct2 struct {
 结构体 `CreateUser`
 
 ```go
-type CreateUser struct {
+type RequestCreateUser struct {
 	Email string
 	NikeName string
 	Age int
