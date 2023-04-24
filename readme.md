@@ -29,7 +29,7 @@ type exampleStruct2 struct {
 ```go
 type RequestCreateUser struct {
 	Email string
-	NikeName string
+	Nickname string
 	Age int
 }
 ```
