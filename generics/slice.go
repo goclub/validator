@@ -16,7 +16,7 @@ type SliceSpec struct {
 	Unique        bool
 }
 
-func Slice[T comparable](r *vd.Rule, slice []T, spec SliceSpec, elementCheck ...func(elem T, r *vd.Rule, index int) (err error)) {
+func Slice[T comparable](r *vd.Rule, slice []T, spec SliceSpec, elementCheck ...func(v T, index int) (err error)) {
 	if r.Fail {
 		return
 	}
@@ -32,7 +32,7 @@ func Slice[T comparable](r *vd.Rule, slice []T, spec SliceSpec, elementCheck ...
 	}
 	for _, check := range elementCheck {
 		for i, v := range slice {
-			if err := check(v, r, i); err != nil {
+			if err := check(v, i); err != nil {
 				r.Error(err)
 				break
 			}

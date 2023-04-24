@@ -175,8 +175,8 @@ type SliceElement struct {
 func (v SliceElement) VD(r *vd.Rule) (err error) {
 	Slice(r, v.Skills, SliceSpec{
 		MinLen: vd.Int(2),
-	}, func(elem string, r *vd.Rule, i int) (err error) {
-		r.String(elem, vd.StringSpec{
+	}, func(v string, i int) (err error) {
+		r.String(v, vd.StringSpec{
 			BanPattern:     []string{"fuck"},
 			PatternMessage: "不能有脏话",
 		})
