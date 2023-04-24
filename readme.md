@@ -62,7 +62,7 @@ func (v RequestCreateUser) VD(r *vd.Rule) error {
 
 ```go
 checker := vd.NewCN()
-req := CreateUser{
+req := RequestCreateUser{
     Email: "xxx@domain.com",
     Nickname: "三儿",
     Age: 20,
