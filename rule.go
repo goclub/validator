@@ -9,8 +9,14 @@ type Rule struct {
 	Message string
 	Path    []string
 	Format  Formatter
+	error   error
 }
 
+func (r *Rule) Error(err error) {
+	if err != nil {
+		r.error = err
+	}
+}
 func (r *Rule) Break(message string, path string) {
 	r.Fail = true
 	r.Message = message

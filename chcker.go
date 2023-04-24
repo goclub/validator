@@ -41,6 +41,9 @@ func (checker Checker) reflectCheck(rValue reflect.Value, rType reflect.Type, pa
 		if err != nil {
 			return
 		}
+		if rule.error != nil {
+			return
+		}
 		if rule.Fail {
 			report.Fail = true
 			report.Message = rule.Message

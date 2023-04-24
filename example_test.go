@@ -93,13 +93,19 @@ func (v RequestCreateUser) VD(r *vd.Rule) (err error) {
 		Min:        vd.Int(18),
 		MinMessage: "只允许成年人注册",
 	})
-	r.Slice(len(v.Skills), vd.SliceSpec{
-		Name:          "技能",
-		Path:          "skills",
-		MaxLen:        vd.Int(10),
-		MaxLenMessage: "最多填写{{MaxLen}}项",
-		UniqueStrings: v.Skills,
+	r.Int(len(v.Skills), vd.IntSpec{
+		Name:       "技能",
+		Path:       "skills",
+		Max:        vd.Int(10),
+		MaxMessage: "最多填写{{Max}}项",
 	})
+	// vdg.Slice(r, v.Skills, vdg.SliceSpec{
+	// 	Name:          "技能",
+	// 	Path:          "skills",
+	// 	MaxLen:        vd.Int(10),
+	// 	MaxLenMessage: "最多填写{{MaxLen}}项",
+	// 	Unique:        true,
+	// })
 	for index, skill := range v.Skills {
 		r.String(skill, vd.StringSpec{
 			Name: "技能项",
