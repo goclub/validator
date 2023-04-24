@@ -175,9 +175,8 @@ type SliceElement struct {
 func (v SliceElement) VD(r *vd.Rule) (err error) {
 	Slice(r, v.Skills, SliceSpec{
 		MinLen: vd.Int(2),
-	}, func(elem string, r *vd.Rule) (err error) {
+	}, func(elem string, r *vd.Rule, i int) (err error) {
 		r.String(elem, vd.StringSpec{
-			Path:           "skills[*]",
 			BanPattern:     []string{"fuck"},
 			PatternMessage: "不能有脏话",
 		})
@@ -194,7 +193,6 @@ func TestSliceElement(t *testing.T) {
 	})
 	CheckEqualAndNoError(t, checker, SliceElement{Skills: []string{"fuck", "abc"}}, vd.Report{
 		Fail:    true,
-		Path:    "skills[*]",
 		Message: "不能有脏话",
 	})
 }
@@ -206,7 +204,6 @@ type SliceElement2 struct {
 func (v SliceElement2) VD(r *vd.Rule) (err error) {
 	for _, skill := range v.Skills {
 		r.String(skill, vd.StringSpec{
-			Path:           "skills[*]",
 			BanPattern:     []string{"fuck"},
 			PatternMessage: "不能有脏话",
 		})
@@ -218,7 +215,6 @@ func TestSliceElement2(t *testing.T) {
 	checker := vd.NewCN()
 	CheckEqualAndNoError(t, checker, SliceElement2{Skills: []string{"fuck", "abc"}}, vd.Report{
 		Fail:    true,
-		Path:    "skills[*]",
 		Message: "不能有脏话",
 	})
 }
